@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="file://$USER_HOME$/Downloads/poi-bin-4.0.0-20180907/poi-4.0.0/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$USER_HOME$/Downloads/poi-bin-4.0.0-20180907/poi-4.0.0/lib" recursive="false" />
+  </library>
+</component>
