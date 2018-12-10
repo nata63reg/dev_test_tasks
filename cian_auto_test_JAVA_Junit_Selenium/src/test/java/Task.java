@@ -3,50 +3,58 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.BeforeClass;
+import org.junit.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.*;
 
 public class Task {
 
-    public static WebDriver driver;
+    private static WebDriver driver;
+    private static WebDriverWait wait;
+    private static XSSFSheet sheet_out;
+    private static XSSFSheet sheet;
+    private static XSSFWorkbook wb_out;
+    private static String url = "https://www.cian.ru/";
 
     @BeforeClass
-    public static void settings() {
+    public static void setup() {
+        //WebDriver driver;
+        driver = new ChromeDriver();
         System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
-
-
-    }
-    @Test
-    public void test() throws IOException{
-        WebDriver driver = new ChromeDriver();
         driver.manage().window().maximize();
-        String url= "https://www.cian.ru/";
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        wait = new WebDriverWait(driver, 10);
         driver.get(url);
+        assertTrue(driver.getTitle().contains("ЦИАН"));
+    }
+    @AfterClass
+    public static void tearDown() {
+        driver.close();
+        driver.quit();
+    }
 
-        XSSFWorkbook wb_out = new XSSFWorkbook();
-        XSSFSheet sheet_out = wb_out.createSheet("OutData");
+    @Test
+    public void body() throws IOException{
+        wb_out = new XSSFWorkbook();
+        sheet_out = wb_out.createSheet("OutData");
+        XSSFWorkbook book = new XSSFWorkbook(new FileInputStream("data.xlsx"));
+        sheet = book.getSheet("List");
 
-
-        XSSFWorkbook book = new XSSFWorkbook(new FileInputStream("data.xlsx")) ;
-        XSSFSheet sheet = book.getSheet("List");
-        int lst_row=sheet.getLastRowNum(),counter=-1;
-        //int colNum = sheet.getRow(0).getLastCellNum();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
-
-
-        for (int i=0;i<lst_row;i++) {
+        int lst_row = sheet.getLastRowNum(), counter = -1;
+        for (int i=0; i < lst_row; i++) {
             XSSFRow row = sheet.getRow(i + 1);
-            String cell1="", cell2 = "", cell3 = "", cell4 = "", cell5 = "", cell6 = "", cell7 = "";
+            String cell1 = "", cell2 = "", cell3 = "", cell4 = "", cell5 = "", cell6 = "", cell7 = "";
 
             if (row.getCell(0) != null)
                 cell1 = row.getCell(0).getStringCellValue();
@@ -69,127 +77,136 @@ public class Task {
             if (row.getCell(6) != null)
                 cell7 = row.getCell(6).getStringCellValue();
 
-            //------------------------------------------------
-
+            //--------------First field----------------------------------
 
             if (cell1.equals("Купить") || cell1.equals("Снять") || cell1.equals("Посуточно")) {
-                String str = "//*[@id='mainpage___R6E7C']/div/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[1]/span/";
-                wait.until(ExpectedConditions.elementToBeClickable(By.xpath(str + "button"))).click();
+                wait.until(ExpectedConditions.elementToBeClickable(Pom.buy_button)).click();
+
 
                 if (cell1.equals("Купить")) {
-                   // driver.findElement(By.xpath(str + "div/div/div/div[1]")).click();
-                    wait.until(ExpectedConditions.elementToBeClickable(By.xpath(str + "div/div/div/div[1]"))).click();
+                    wait.until(ExpectedConditions.elementToBeClickable(Pom.buy)).click();
+                    String buy = driver.findElement(Pom.buy_button).getText();
+                    assertEquals(buy, "Купить");
+
                 } else if (cell1.equals("Снять")) {
-                   // driver.findElement(By.xpath(str + "div/div/div/div[2]")).click();
-                    wait.until(ExpectedConditions.elementToBeClickable(By.xpath(str + "div/div/div/div[2]"))).click();
+                    wait.until(ExpectedConditions.elementToBeClickable(Pom.rent)).click();
+
+                    String rent = driver.findElement(Pom.buy_button).getText();
+                    assertEquals(rent, "Снять");
+
                 } else if (cell1.equals("Посуточно")) {
-                    //driver.findElement(By.xpath(str + "div/div/div/div[3]")).click();
-                    wait.until(ExpectedConditions.elementToBeClickable(By.xpath(str + "div/div/div/div[3]"))).click();
-                    }
+                    wait.until(ExpectedConditions.elementToBeClickable(Pom.daily)).click();
+                    String daily = driver.findElement(Pom.buy_button).getText();
+                    assertEquals(daily, "Посуточно");
+                }
             }
 
-            //------------------------------------------
+            //-------------Second field-----------------------------
 
             if (cell2.equals("Квартиру") || cell2.equals("Дом") || cell2.equals("Комната")) {
-                String str = "//*[@id='mainpage___R6E7C']/div/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[2]/div/";
-                wait.until(ExpectedConditions.elementToBeClickable(By.xpath(str + "button"))).click();
+                wait.until(ExpectedConditions.elementToBeClickable(Pom.flat_button)).click();
 
                 if (cell2.equals("Квартиру")) {
-                    //driver.findElement(By.xpath(str + "div/div/div[1]/ul/li[1]/label/span")).click();
-                    wait.until(ExpectedConditions.elementToBeClickable(By.xpath(".//*[text()='Квартиру']/.."))).click();
+                    wait.until(ExpectedConditions.elementToBeClickable(Pom.flat)).click();
+                    String flat = driver.findElement(Pom.flat).getText();
+                    assertEquals(flat, "Квартиру");
+
                 } else if (cell2.equals("Дом")) {
-                    //driver.findElement(By.xpath(str + "div/div/div[1]/ul/li[4]/label/span")).click();
-                    wait.until(ExpectedConditions.elementToBeClickable(By.xpath(".//*[text()='Дом']/.."))).click();
+                    wait.until(ExpectedConditions.elementToBeClickable(Pom.home)).click();
+                    String home = driver.findElement(Pom.home).getText();
+                    assertEquals(home, "Дом");
+
                 } else if (cell2.equals("Комната")) {
-                    //driver.findElement(By.xpath(str + "div/div/div[1]/ul/li[2]/label/span")).click();
-                    wait.until(ExpectedConditions.elementToBeClickable(By.xpath(".//*[text()='Комната']/.."))).click();
+                    wait.until(ExpectedConditions.elementToBeClickable(Pom.room)).click();
+                    String room = driver.findElement(Pom.room).getText();
+                    assertEquals(room, "Комната");
                 }
             }
 
-
+            // -----------Third field--------------------
             if (cell3.equals("Вторичка")) {
-                String str = "//*[@id='mainpage___R6E7C']/div/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[3]/div/";
-                wait.until(ExpectedConditions.elementToBeClickable(By.xpath(str + "button"))).click();
+                wait.until(ExpectedConditions.elementToBeClickable(Pom.second_button)).click();
 
                 if (cell3.equals("Вторичка")) {
-                    //driver.findElement(By.xpath(str + "div/div/div/ul/li[2]/label/span")).click();
-                    wait.until(ExpectedConditions.elementToBeClickable(By.xpath(str + "div/div/div/ul/li[2]/label/span"))).click();
+                    wait.until(ExpectedConditions.elementToBeClickable(Pom.secondary)).click();
+                    String smarket = driver.findElement(Pom.second_button).getText();
+                    assertEquals(smarket, "Во вторичке");
                 }
-
             }
 
-
             if (cell4.equals("студия")) {
-                String str = "//*[@id='mainpage___R6E7C']/div/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[4]/span/";
-                wait.until(ExpectedConditions.elementToBeClickable(By.xpath(str + "button"))).click();
+                wait.until(ExpectedConditions.elementToBeClickable(Pom.studia_button)).click();
 
                 if (cell4.equals("студия")) {
-                    //driver.findElement(By.xpath(str + "div/div/div/div[1]/span/label")).click();
-                    wait.until(ExpectedConditions.elementToBeClickable(By.xpath(str + "div/div/div/div[1]/span/label"))).click();
+
+                    wait.until(ExpectedConditions.elementToBeClickable(Pom.studia)).click();
+                    String studia = driver.findElement(Pom.studia).getText();
+                    assertEquals(studia, "Студия");
                 }
             }
 
             if (!cell5.equals("0") || !cell5.equals("")) {
                 //Send start price
-                System.out.println("Start_price="+cell5);
-                wait.until(ExpectedConditions.elementToBeClickable(By.xpath(".//*[@placeholder='от']"))).sendKeys(cell5);
+                System.out.println("Start_price=" + cell5);
+                wait.until(ExpectedConditions.elementToBeClickable(Pom.from)).sendKeys(cell5);
+                String attr1 = driver.findElement(Pom.from).getAttribute("value");
+                assertEquals(cell5, attr1);
             }
 
             if (!cell6.equals("0") || !cell6.equals("")) {
                 //Send end price
-                System.out.println("End_price="+cell6);
-                wait.until(ExpectedConditions.elementToBeClickable(By.xpath(".//*[@placeholder='до']"))).sendKeys(cell6);
+                System.out.println("End_price=" + cell6);
+                wait.until(ExpectedConditions.elementToBeClickable(Pom.to)).sendKeys(cell6);
+                String attr2 = driver.findElement(Pom.to).getAttribute("value");
+                assertEquals(cell6, attr2);
             }
 
             if (!cell7.equals("")) {
-                System.out.println("City="+cell7);
-                String str=".//*[text()='"+cell7+"']";
+                System.out.println("City=" + cell7);
+                String str = ".//*[text()='" + cell7 + "']";
 
-                wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='c_filters-suggest_input']"))).sendKeys("\b\b\b\b\b\b\b\b\b\b\b\b");
-                wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='c_filters-suggest_input']"))).sendKeys(cell7);
+                wait.until(ExpectedConditions.elementToBeClickable(Pom.city)).sendKeys("\b\b\b\b\b\b\b\b\b\b\b\b");
+                wait.until(ExpectedConditions.elementToBeClickable(Pom.city)).sendKeys(cell7);
                 wait.until(ExpectedConditions.elementToBeClickable(By.xpath(str))).click();
+                String attr3 = driver.findElement(Pom.city).getAttribute("value");
+                assertEquals(cell7, attr3);
             }
-
-
 
             //Click find button
-            wait.until(ExpectedConditions.elementToBeClickable(By.className("c-filters-field-button___1EBB-"))).click();
+            wait.until(ExpectedConditions.elementToBeClickable(Pom.click_find)).click();
             //Check button on second page before start new iteration
-            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='frontend-serp']/div/div[1]/div/div/div[2]/div[5]/button")));
-
-
+            wait.until(ExpectedConditions.elementToBeClickable(Pom.find_button));
 
             //Wait until loads offers then click
-            //wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@id=\"frontend-serp\"]/div/div[5]/div[1]"))).click();
+
             System.out.println("Click first offer in page");
-            //wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"frontend-serp\"]/div/div[4]/div[1]"))).click();
-            wait.until(ExpectedConditions.elementToBeClickable(By.className("_93444fe79c-card--2Jgih"))).click();
+            wait.until(ExpectedConditions.elementToBeClickable(Pom.click_offer)).click();
             //Get Focus to tab 2
-            ArrayList<String> tabs2 = new ArrayList<String> (driver.getWindowHandles());
+            ArrayList<String> tabs2 = new ArrayList<String>(driver.getWindowHandles());
             driver.switchTo().window(tabs2.get(1));
 
-
             //Scroll-----------------START
-            int cnt =  driver.findElements(By.cssSelector(".fotorama__nav__frame")).size();
-            System.out.println("Kol-vo img:"+cnt);
+            int cnt = driver.findElements(Pom.get_quantity).size();
 
-            if (cnt>0){
+            System.out.println("Kol-vo img:" + cnt);
+
+            if (cnt > 0) {
                 for (int k = 1; k <= cnt; k++)
-                    wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".fotorama__arr.fotorama__arr--next"))).click();
-            }
+                    wait.until(ExpectedConditions.presenceOfElementLocated(Pom.click_arrow)).click();
+                                }
             //Scroll-----------------END
 
             //Getting data [START]----------------
-            String str_data1="", str_data2="",str_data3="";
-            str_data1 = driver.findElements(By.className("a10a3f92e9--title--2Widg")).get(0).getText();
+            //String str_data1 = "", str_data2 = "", str_data3 = "";
+            String str_data1 = driver.findElements(Pom.get_data1).get(0).getText();
             //Get info block
-            str_data2 = driver.findElements(By.className("a10a3f92e9--info-block--3hCay")).get(0).getText();
-            str_data2=str_data2.replace("\n"," ");
+            String str_data2 = driver.findElements(Pom.get_data2).get(0).getText();
+            str_data2 = str_data2.replace("\n", " ");
             //String[] words=str2.split("\n");
 
             //Get Address
-            str_data3 = driver.findElements(By.className("a10a3f92e9--address--140Ec")).get(0).getText();
-            str_data3=str_data3.replace("На карте","");
+            String str_data3 = driver.findElements(Pom.get_data3).get(0).getText();
+            str_data3 = str_data3.replace("На карте", "");
 
             System.out.println(str_data1);
             System.out.println(str_data2.trim());
@@ -214,13 +231,15 @@ public class Task {
             //Row row_out = sheet_out.createRow(counter++);
 
             //Write to file
-            try{
+            try {
                 File file = new File("Out.xlsx");
                 FileOutputStream out = new FileOutputStream(file);
-                wb_out.write(out);}
-                //counter++;}
+                wb_out.write(out);
+            }
+            //counter++;}
             catch (IOException e) {
-                e.printStackTrace();}
+                e.printStackTrace();
+            }
 
 
             //--Writing data to excel-----[END]------
@@ -233,10 +252,8 @@ public class Task {
             //driver.navigate().back();
 
             driver.get(url);
-
         }
-
-        }
+    }
 
 }
 
