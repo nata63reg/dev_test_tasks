@@ -8,5 +8,5 @@
     3. Open offer.
     4. Scroll through all photos
     5. Write data in Excel file.
-    6. Go back to main page in step 1.
+    6. Go back to the main page in step 1.
     7. Repeat steps 2-6, until last line != empty.
