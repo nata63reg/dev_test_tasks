@@ -14,6 +14,6 @@
 	8. Click button «ВХОД»
 	
 #### Notice:
-	ul Each step must be checked. (e.g: After step 3 check that field is populated properly).
+	- Each step must be checked. (e.g: After step 3 check that field is populated properly).
 	- Use only CSS and XPATH locators.
 	- Use implicity and explicity waits.
