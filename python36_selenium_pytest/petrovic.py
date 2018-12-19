@@ -18,6 +18,7 @@ class TestPetro:
 		height = 1366
 		width = 768
 		driver.set_window_size(height, width)
+		driver.implicitly_wait(10)
 		wait = WebDriverWait(driver, 10)
 
 		yield
@@ -27,7 +28,7 @@ class TestPetro:
 	def test_login_page(self,setup):
 		driver.get("https://petrovich.ru/login/")
 		assert "Петрович" in driver.title
-
+		
 	def test_login(self,setup):
 		login_value="test_task@petrovich.ru"
 		wait.until(EC.visibility_of_element_located(LoginPage.LOGIN)).send_keys(login_value)
@@ -58,7 +59,6 @@ class TestPetro:
 
 	def test_click_button(self,setup):
 		wait.until(EC.element_to_be_clickable(LoginPage.BUTTON)).click()
-		driver.implicitly_wait(3)
 		prof_name = wait.until(EC.visibility_of_element_located(LoginPage.PROFILE)).get_attribute('textContent')
 		assert "test_task" in prof_name
 

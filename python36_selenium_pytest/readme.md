@@ -1,21 +1,19 @@
-Задание:
-	Написать автоматизированный тест на форму авторизации используя ООП и Page Object Pattern.
-	Используемые инструменты: Python версии 3+, selenium 3+, pytest 3+
-	Автотест должен запускаться в браузере Chrome в разрешении 1366х768px, затем прогоняться и после прогона успешно завершаться.
-	Форма авторизации: https://petrovich.ru/login/ 
+#### Task:
+        Please create Automation test. Use OOP and Page Object Pattern.
+	Tools: Python 3+, Selenium 3+, Pytest 3+.
+	Autotest must be running with resolution 1366px х 768px and successfully finished after iteration
 
-Тестовый сценарий:
-
-	1. Открыть браузер Chrome версии 70
-	2. Перейти на сайт по адресу: https://petrovich.ru/login/ 
-	3. В поле «Логин или E-mail» ввести test_task@petrovich.ru
-	4. В поле «Пароль» ввести: 111111
-	5. Деактивировать чекбокс «Запомнить меня»
-	6. Очистить поле «Логин или E-mail»
-	7. В поле «Логин или E-mail» ввести test_task
-	8. Нажать кнопку «ВХОД»
-
-Примечания:
-	После каждого шага нужно делать проверку на предыдущее действие. (Например, после ввода почты в поле «Логин» нужно убедиться, что поле «Логин» заполнено верно)
-	Использовать CSS и XPATH локаторы
-	Использовать явные и неявные ожидания
+#### Test case:
+	1. Open Google Chrome v70+;
+	2. Navigate to: "https://petrovich.ru/login/";
+	3. In field «Login / E-mail» type "test_task@petrovich.ru";
+	4. In field «Password» type: "111111";
+	5. Uncheck «Запомнить меня»;
+	6. Clear field «Login / E-mail»;
+	7. In field «Login / E-mail» type "test_task";
+	8. Click button «ВХОД»
+	
+#### Notice:
+	- Each step must be checked. (e.g: After step 3 check that field was populated properly).
+	- Use only CSS and XPATH locators.
+	- Use implicity and explicity waits.
